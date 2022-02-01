@@ -1,5 +1,6 @@
 package com.example.houseitem.controller;
 
+import com.example.houseitem.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -12,12 +13,14 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class ItemController {
 
+    @Autowired
+    private ItemService itemService;
 
+    @GetMapping(value = "/animal")
+    public ResponseEntity<List<String>> animal(){
+        List<String> list = itemService.animalAll();
 
-    @GetMapping(value = "/test")
-    public ResponseEntity<String> test(){
-        String string = new String("OK Sa marche");
-        return ResponseEntity.ok(string);
+        return ResponseEntity.ok(list);
     }
 
 

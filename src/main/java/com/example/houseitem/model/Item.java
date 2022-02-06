@@ -17,17 +17,41 @@ public class Item {
     @Column
     private int quantity;
 
-    @Column
-    private Long id_house;
+    @ManyToOne
+    @JoinTable(name = "house_item",
+            joinColumns = @JoinColumn(name = "id_item"),
+            inverseJoinColumns = @JoinColumn(name = "id_house"))
+    private House house;
+
+    @ManyToOne
+    @JoinTable(name = "shopping_item",
+            joinColumns = @JoinColumn(name = "id_item"),
+            inverseJoinColumns = @JoinColumn(name = "id_shopping"))
+    private Shopping shopping;
+
+    @ManyToOne
+    @JoinTable(name = "shoppingType_item",
+            joinColumns = @JoinColumn(name = "id_item"),
+            inverseJoinColumns = @JoinColumn(name = "id_shoppingType"))
+    private ShoppingType shoppingType;
+
+    @ManyToOne
+    @JoinTable(name = "shoppingBackup_item",
+            joinColumns = @JoinColumn(name = "id_item"),
+            inverseJoinColumns = @JoinColumn(name = "id_shoppingBackup"))
+    private ShoppingBackup shoppingBackup;
 
     public Item() {
     }
 
-    public Item(Long id_item, String name, int quantity, Long id_house) {
+    public Item(Long id_item, String name, int quantity, House house, Shopping shopping, ShoppingType shoppingType, ShoppingBackup shoppingBackup) {
         this.id_item = id_item;
         this.name = name;
         this.quantity = quantity;
-        this.id_house = id_house;
+        this.house = house;
+        this.shopping = shopping;
+        this.shoppingType = shoppingType;
+        this.shoppingBackup = shoppingBackup;
     }
 
     public Long getId_item() {
@@ -54,11 +78,36 @@ public class Item {
         this.quantity = quantity;
     }
 
-    public Long getId_house() {
-        return id_house;
+    public House getHouse() {
+        return house;
     }
 
-    public void setId_house(Long id_house) {
-        this.id_house = id_house;
+    public void setHouse(House house) {
+        this.house = house;
     }
+
+    public Shopping getShopping() {
+        return shopping;
+    }
+
+    public void setShopping(Shopping shopping) {
+        this.shopping = shopping;
+    }
+
+    public ShoppingType getShoppingType() {
+        return shoppingType;
+    }
+
+    public void setShoppingType(ShoppingType shoppingType) {
+        this.shoppingType = shoppingType;
+    }
+
+    public ShoppingBackup getShoppingBackup() {
+        return shoppingBackup;
+    }
+
+    public void setShoppingBackup(ShoppingBackup shoppingBackup) {
+        this.shoppingBackup = shoppingBackup;
+    }
+
 }

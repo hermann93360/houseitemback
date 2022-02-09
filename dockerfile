@@ -1,4 +1,4 @@
-FROM jdk-16.0.1_9-alpine
+FROM openjdk:lasted
 WORKDIR /home
 COPY /target/houseitem.jar houseitem.jar
 EXPOSE 8080

@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class ItemService {
@@ -69,8 +72,24 @@ public class ItemService {
         return this.houseRepository.findByHouseId(id_house).getShoppingType().getItem();
     }
 
+    public List<Item> getItemsByName(Long id_house, String name){
+       return containsSubString(this.houseRepository.findByHouseId(id_house).getItem(), name);
+    }
+
+    public List<Item> getItemsByNameAndIdShoppingType(Long id_shopping, String name) {
+        return containsSubString(this.shoppingTypeRepository.findByShoppingTypeId(id_shopping).getItem(), name);
+    }
+
+    private List<Item> containsSubString(List<Item> items, String name){
+
+        return (items != null || name != null ) ? items.stream()
+                .filter(item -> item.getName() != null && item.getName().toLowerCase().contains(name.toLowerCase()))
+                .collect(Collectors.toList()) : null;
+    }
+
+
     public List<Item> getItemsByIdHouse(Long id_house){
-        return null;
+        return this.houseRepository.findByHouseId(id_house).getItem();
     }
 
     public boolean generateShoppingList(Long id_house, Long id_shopping){

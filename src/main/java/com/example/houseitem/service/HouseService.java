@@ -4,7 +4,9 @@ import com.example.houseitem.dto.HouseDto;
 import com.example.houseitem.exception.ConnectException;
 import com.example.houseitem.exception.RegisterException;
 import com.example.houseitem.model.House;
+import com.example.houseitem.model.ShoppingType;
 import com.example.houseitem.repository.HouseRepository;
+import com.example.houseitem.repository.ShoppingTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,9 @@ public class HouseService {
 
     @Autowired
     private HouseRepository houseRepository;
+
+    @Autowired
+    private ShoppingTypeRepository shoppingTypeRepository;
 
     @Autowired
     HttpServletResponse response;
@@ -32,7 +37,15 @@ public class HouseService {
         house.setName(houseDto.getName());
         house.setHouseCode(houseDto.getHouseCode());
 
-        return this.houseRepository.save(house);
+        House houseSave = this.houseRepository.save(house);
+
+        ShoppingType shoppingType = new ShoppingType();
+        shoppingType.setName("Course type de la maison : " + house.getName());
+        shoppingType.setHouse(houseSave);
+
+        this.shoppingTypeRepository.save(shoppingType);
+
+        return houseSave;
     }
 
     public String connectHouse(HouseDto houseDto) throws ConnectException{

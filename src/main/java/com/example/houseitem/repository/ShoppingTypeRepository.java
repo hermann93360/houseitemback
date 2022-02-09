@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.Query;
 public interface ShoppingTypeRepository extends JpaRepository<ShoppingType, Long> {
     @Query("select s from ShoppingType s where s.id_shoppingType = ?1 ")
     ShoppingType findByShoppingTypeId(Long id_shoppingType);
+
 }

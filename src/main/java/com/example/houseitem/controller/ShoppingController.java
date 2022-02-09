@@ -12,9 +12,9 @@ import com.example.houseitem.service.ShoppingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @CrossOrigin(origins = "*")
@@ -28,8 +28,19 @@ public class ShoppingController {
         return ResponseEntity.ok(this.shoppingService.addShoppingType(shoppingDto));
     }
 
+    @GetMapping(value = "/shopping/type/{id_house}")
+    public ResponseEntity<ShoppingType> getShoppingTypeByIdHouse(@PathVariable Long id_house){
+        return ResponseEntity.ok(this.shoppingService.getShoppingType(id_house));
+    }
+
+
     @PostMapping(value = "/shopping/add")
     public ResponseEntity<Shopping> addShopping(@RequestBody ShoppingDto shoppingDto){
         return ResponseEntity.ok(this.shoppingService.addShopping(shoppingDto));
+    }
+
+    @GetMapping(value = "/shopping/{id_house}")
+    public ResponseEntity<List<Shopping>> getShopping(@PathVariable Long id_house){
+        return ResponseEntity.ok(this.shoppingService.getShopping(id_house));
     }
 }

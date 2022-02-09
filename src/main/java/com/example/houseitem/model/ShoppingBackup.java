@@ -29,17 +29,24 @@ public class ShoppingBackup {
             inverseJoinColumns = @JoinColumn(name = "id_house"))
     private House house;
 
+
+    private Long id_shopping;
+
     private String price;
+
+    private boolean archived;
 
     public ShoppingBackup() {
     }
 
-    public ShoppingBackup(Long id_shoppingBackup, String name, List<Item> item, House house, String price) {
+    public ShoppingBackup(Long id_shoppingBackup, String name, List<Item> item, House house, Long id_shopping, String price, boolean archived) {
         this.id_shoppingBackup = id_shoppingBackup;
         this.name = name;
         this.item = item;
         this.house = house;
+        this.id_shopping = id_shopping;
         this.price = price;
+        this.archived = archived;
     }
 
     public Long getId_shoppingBackup() {
@@ -74,6 +81,14 @@ public class ShoppingBackup {
         this.house = house;
     }
 
+    public Long getId_shopping() {
+        return id_shopping;
+    }
+
+    public void setId_shopping(Long id_shopping) {
+        this.id_shopping = id_shopping;
+    }
+
     public String getPrice() {
         return price;
     }
@@ -82,4 +97,11 @@ public class ShoppingBackup {
         this.price = price;
     }
 
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
+    }
 }

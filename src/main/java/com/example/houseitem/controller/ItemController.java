@@ -38,6 +38,21 @@ public class ItemController {
         return ResponseEntity.ok(this.itemService.addItemInShoppingListType(itemDto));
     }
 
+    @GetMapping(value = "/items/shopping/type/items/{id_house}")
+    public ResponseEntity<List<Item>> itemsByShoppingList(@PathVariable Long id_house){
+        return ResponseEntity.ok(this.itemService.getItemsShoppingTypeByIdHouse(id_house));
+    }
+
+    @GetMapping(value = "/items/shopping/type/{id_shopping}/{name}")
+    public ResponseEntity<List<Item>> itemsByShoppingTypeAndName(@PathVariable Long id_shopping, @PathVariable String name){
+        return ResponseEntity.ok(this.itemService.getItemsByNameAndIdShoppingType(id_shopping, name));
+    }
+
+    @GetMapping(value = "/items/{id_house}/{name}")
+    public ResponseEntity<List<Item>> itemsByHouseAndName(@PathVariable Long id_house, @PathVariable String name){
+        return ResponseEntity.ok(this.itemService.getItemsByName(id_house, name));
+    }
+
     @PostMapping(value = "/item/shopping/add/{id_house}/{id_shopping}")
     public ResponseEntity<Boolean> addItemGenerateInShoppingList(@PathVariable Long id_house, @PathVariable Long id_shopping){
         return ResponseEntity.ok(this.itemService.generateShoppingList(id_house, id_shopping));
@@ -47,6 +62,7 @@ public class ItemController {
     public ResponseEntity<List<Item>> itemsByHouse(@PathVariable Long id_house){
         return ResponseEntity.ok(this.itemService.getItemsByIdHouse(id_house));
     }
+
 
 
 }

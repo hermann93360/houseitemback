@@ -29,14 +29,17 @@ public class Shopping {
             inverseJoinColumns = @JoinColumn(name = "id_house"))
     protected House house;
 
+    private Long id_shoppingBackup;
+
     public Shopping() {
     }
 
-    public Shopping(Long id_shopping, String name, List<Item> item, House house) {
+    public Shopping(Long id_shopping, String name, List<Item> item, House house, Long id_shoppingBackup) {
         this.id_shopping = id_shopping;
         this.name = name;
         this.item = item;
         this.house = house;
+        this.id_shoppingBackup = id_shoppingBackup;
     }
 
     public Long getId_shopping() {
@@ -71,4 +74,11 @@ public class Shopping {
         this.house = house;
     }
 
+    public Long getId_shoppingBackup() {
+        return id_shoppingBackup;
+    }
+
+    public void setId_shoppingBackup(Long id_shoppingBackup) {
+        this.id_shoppingBackup = id_shoppingBackup;
+    }
 }

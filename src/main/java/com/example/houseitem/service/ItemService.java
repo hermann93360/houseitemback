@@ -33,9 +33,20 @@ public class ItemService {
     public ItemService() {
     }
 
+    private Item existingItem(ItemDto itemDto){
+        if(this.itemRepository.findByName(itemDto.getName()) != null){
+            Item item = this.itemRepository.findByName(itemDto.getName());
+            item.setQuantity(item.getQuantity() + 1);
+            return this.itemRepository.save(item);
+        }
+        return null;
+    }
     public boolean addItemInHouse(ItemDto itemDto){
         if(this.houseRepository.findByHouseId(itemDto.getId_house()) == null)
             return false;
+
+        if(this.existingItem(itemDto) != null)
+            return true;
 
         Item item = new Item();
         House house = new House();
@@ -43,7 +54,7 @@ public class ItemService {
 
         item.setHouse(house);
         item.setName(itemDto.getName());
-        item.setQuantity(itemDto.getQuantity());
+        item.setQuantity(itemDto.getQuantity() == 0 ? 1 : itemDto.getQuantity());
 
         return this.itemRepository.save(item) != null;
     }
@@ -53,13 +64,16 @@ public class ItemService {
         if(this.shoppingTypeRepository.findByShoppingTypeId(itemDto.getId_shopping()) == null)
             return false;
 
+        if(this.existingItem(itemDto) != null)
+            return true;
+
         Item item = new Item();
         ShoppingType shoppingType = new ShoppingType();
         shoppingType.setId_shoppingType(itemDto.getId_shopping());
 
         item.setShoppingType(shoppingType);
         item.setName(itemDto.getName());
-        item.setQuantity(itemDto.getQuantity());
+        item.setQuantity(itemDto.getQuantity() == 0 ? 1 : itemDto.getQuantity());
 
         return this.itemRepository.save(item) != null;
 
@@ -69,8 +83,8 @@ public class ItemService {
         if(this.shoppingRepository.findByShoppingId(itemDto.getId_shopping()) == null)
             return null;
 
-        if(itemDto.getQuantity() == 0){
-        }
+        if(this.existingItem(itemDto) != null)
+            return this.existingItem(itemDto);
 
         ShoppingBackup shopSave = this.shoppingBackupRepository.findById_shoppingId(itemDto.getId_shopping());
         Shopping shopping = this.shoppingRepository.findByShoppingId(itemDto.getId_shopping());
@@ -80,7 +94,7 @@ public class ItemService {
         itemShop.setShopping(shopping);
 
         itemShop.setName(itemDto.getName());
-        itemShop.setQuantity(itemDto.getQuantity());
+        itemShop.setQuantity(itemDto.getQuantity() <= 0 ? 1 : itemDto.getQuantity());
 
 
 
@@ -131,6 +145,7 @@ public class ItemService {
     public List<Item> generateShoppingList(Long id_house, Long id_shopping){
 
         Shopping shopping = this.shoppingRepository.findByShoppingId(id_shopping);
+        ShoppingBackup shoppingBackup = this.shoppingBackupRepository.findById_shoppingId(id_shopping);
 
         List<Item> itemInHouse = this.getItemsByIdHouse(id_house);
         List<Item> itemShoppingType = this.getItemsShoppingTypeByIdHouse(id_house);
@@ -143,28 +158,38 @@ public class ItemService {
             for(Item itemHouse: itemInHouse){
                 if(itemShop.getName().equalsIgnoreCase(itemHouse.getName())){
                     if(itemShop.getQuantity() > itemHouse.getQuantity()){
+                        ItemDto itemDto = new ItemDto();
+                        itemDto.setName(itemShop.getName());
+                        itemDto.setQuantity(itemShop.getQuantity() - itemHouse.getQuantity());
+                        itemDto.setId_shopping(id_shopping);
+
                         Item item = new Item();
+                        Item itemSave = new Item();
+
                         item.setQuantity(itemShop.getQuantity() - itemHouse.getQuantity());
+
                         item.setShopping(shopping);
+
                         item.setName(itemHouse.getName());
-                        item.setShoppingBackup(null);
-                        item.setShoppingType(null);
-                        item.setHouse(null);
-                        this.itemRepository.save(item);
+
+                        this.addItemInShopping(itemDto);
                         generateList.add(item);
                     }
                     itemFind = true;
                 }
             }
             if(!itemFind){
+                ItemDto itemDto = new ItemDto();
+                itemDto.setName(itemShop.getName());
+                itemDto.setQuantity(itemShop.getQuantity());
+                itemDto.setId_shopping(id_shopping);
+
                 Item item = new Item();
                 item.setShopping(shopping);
                 item.setName(itemShop.getName());
                 item.setQuantity(itemShop.getQuantity());
-                item.setShoppingBackup(null);
-                item.setShoppingType(null);
-                item.setHouse(null);
-                this.itemRepository.save(item);
+
+                this.addItemInShopping(itemDto);
                 generateList.add(itemShop);
             }
         }

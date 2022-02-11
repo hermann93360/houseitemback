@@ -75,8 +75,13 @@ public class ItemController {
     }
 
     @GetMapping(value = "/items/{id_house}")
-    public ResponseEntity<List<Item>> itemsByHouse(@PathVariable Long id_house){
+    public ResponseEntity<List<Item>> getItemsByHouse(@PathVariable Long id_house){
         return ResponseEntity.ok(this.itemService.getItemsByIdHouse(id_house));
+    }
+
+    @GetMapping(value = "/items/buy/{id_shopping}")
+    public ResponseEntity<List<Item>> getItemsBuy(@PathVariable Long id_shopping){
+        return ResponseEntity.ok(this.itemService.getItemBuy(id_shopping));
     }
 
     @PutMapping(value = "/items/{id_item}")

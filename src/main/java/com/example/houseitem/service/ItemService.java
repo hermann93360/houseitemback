@@ -75,14 +75,29 @@ public class ItemService {
         ShoppingBackup shopSave = this.shoppingBackupRepository.findById_shoppingId(itemDto.getId_shopping());
         Shopping shopping = this.shoppingRepository.findByShoppingId(itemDto.getId_shopping());
 
-        Item item = new Item();
+        Item itemShop = new Item();
 
-        item.setShoppingBackup(shopSave);
-        item.setShopping(shopping);
-        item.setName(itemDto.getName());
-        item.setQuantity(itemDto.getQuantity());
+        itemShop.setShopping(shopping);
 
-        return this.itemRepository.save(item);
+        itemShop.setName(itemDto.getName());
+        itemShop.setQuantity(itemDto.getQuantity());
+
+
+
+        if(!shopSave.getItem()
+                .stream()
+                .filter(item -> item.getName().equals(itemShop.getName()))
+                .findAny()
+                .isPresent()){
+
+            Item itemSave = new Item();
+            itemSave.setShoppingBackup(shopSave);
+            itemSave.setName(itemDto.getName());
+            itemSave.setQuantity(itemDto.getQuantity());
+            this.itemRepository.save(itemSave);
+        }
+
+        return this.itemRepository.save(itemShop);
     }
 
     public List<Item> getItemsShoppingTypeByIdHouse(Long id_house){
@@ -121,7 +136,7 @@ public class ItemService {
         List<Item> itemShoppingType = this.getItemsShoppingTypeByIdHouse(id_house);
 
         List<Item> generateList = new ArrayList<Item>();
-
+;
         boolean itemFind;
         for (Item itemShop: itemShoppingType){
             itemFind = false;
@@ -159,6 +174,25 @@ public class ItemService {
 
     public List<Item> getItemByShopping(Long id_shopping){
         return this.shoppingRepository.findByShoppingId(id_shopping).getItem();
+    }
+    public List<Item> getItemBuy(Long id_shopping){
+        List<Item> itemsShop = this.shoppingRepository.findByShoppingId(id_shopping).getItem();
+        List<Item> itemSave = this.shoppingBackupRepository.findById_shoppingId(id_shopping).getItem();
+
+        List<Item> itemBuy = new ArrayList<>();
+
+        for (Item save: itemSave){
+            Item item = save;
+            for (Item shop : itemsShop){
+                if(shop.getName().equalsIgnoreCase(save.getName())){
+                    item.setQuantity(item.getQuantity() - shop.getQuantity());
+                }
+            }
+            if(item.getQuantity() != 0)
+                itemBuy.add(item);
+        }
+
+        return itemBuy;
     }
 
     public Item updateItem(Long id_item, ItemDto itemDto){

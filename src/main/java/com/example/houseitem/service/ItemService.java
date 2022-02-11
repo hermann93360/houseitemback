@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -33,20 +34,22 @@ public class ItemService {
     public ItemService() {
     }
 
-    private Item existingItem(ItemDto itemDto){
-        if(this.itemRepository.findByName(itemDto.getName()) != null){
-            Item item = this.itemRepository.findByName(itemDto.getName());
-            item.setQuantity(item.getQuantity() + 1);
-            return this.itemRepository.save(item);
-        }
-        return null;
-    }
     public boolean addItemInHouse(ItemDto itemDto){
         if(this.houseRepository.findByHouseId(itemDto.getId_house()) == null)
             return false;
 
-        if(this.existingItem(itemDto) != null)
-            return true;
+        List<Item> itemTe = this.itemRepository.findByName(itemDto.getName());
+        if(itemTe.size() > 0){
+            Optional<Item> itemSameOp = itemTe.stream()
+                    .filter(item -> item.getHouse() != null)
+                    .filter(item -> item.getHouse().getId_house().equals(itemDto.getId_house()))
+                    .findAny();
+            if(itemSameOp.isPresent() ){
+                Item item = itemSameOp.get();
+                item.setQuantity(item.getQuantity() + itemDto.getQuantity());
+                return this.itemRepository.save(item) != null;
+            }
+        }
 
         Item item = new Item();
         House house = new House();
@@ -64,8 +67,19 @@ public class ItemService {
         if(this.shoppingTypeRepository.findByShoppingTypeId(itemDto.getId_shopping()) == null)
             return false;
 
-        if(this.existingItem(itemDto) != null)
-            return true;
+        List<Item> itemTe = this.itemRepository.findByName(itemDto.getName());
+        if(itemTe.size() > 0){
+            Optional<Item> itemSameOp = itemTe.stream()
+                    .filter(item -> item.getShoppingType() != null)
+                    .filter(item -> item.getShoppingType().getId_shoppingType().equals(itemDto.getId_shopping()))
+                    .findAny();
+            if(itemSameOp.isPresent() ){
+                Item item = itemSameOp.get();
+                item.setQuantity(item.getQuantity() + itemDto.getQuantity());
+                return this.itemRepository.save(item) != null;
+            }
+        }
+
 
         Item item = new Item();
         ShoppingType shoppingType = new ShoppingType();
@@ -83,8 +97,19 @@ public class ItemService {
         if(this.shoppingRepository.findByShoppingId(itemDto.getId_shopping()) == null)
             return null;
 
-        if(this.existingItem(itemDto) != null)
-            return this.existingItem(itemDto);
+        List<Item> itemTe = this.itemRepository.findByName(itemDto.getName());
+        if(itemTe.size() > 0){
+            Optional<Item> itemSameOp = itemTe.stream()
+                    .filter(item -> item.getShopping() != null)
+                    .filter(item -> item.getShopping().getId_shopping().equals(itemDto.getId_shopping()))
+                    .findAny();
+            if(itemSameOp.isPresent() ){
+                Item item = itemSameOp.get();
+                item.setQuantity(item.getQuantity() + itemDto.getQuantity());
+                return this.itemRepository.save(item);
+            }
+        }
+
 
         ShoppingBackup shopSave = this.shoppingBackupRepository.findById_shoppingId(itemDto.getId_shopping());
         Shopping shopping = this.shoppingRepository.findByShoppingId(itemDto.getId_shopping());

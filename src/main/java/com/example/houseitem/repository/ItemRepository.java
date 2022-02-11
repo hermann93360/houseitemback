@@ -24,5 +24,5 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     Item findByItemId(Long id_item);
 
     @Query("select i from Item i where i.name = ?1 ")
-    Item findByName(String name);
+    List<Item> findByName(String name);
 }
